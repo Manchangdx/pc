@@ -2,7 +2,7 @@ from flask import Flask, render_template, abort
 import os, json
 
 result = {}
-directory = os.path.join(os.path.abspath(os.path.dirname(__name__)), '..', 'files')
+directory = os.path.join(os.getcwd(), '..', 'files')
 for i in os.listdir(directory):
     file_path = os.path.join(directory, i)
     with open(file_path) as f:
