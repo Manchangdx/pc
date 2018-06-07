@@ -6,8 +6,10 @@ wt = wb[wb.sheetnames[1]]
 wc = wb.create_sheet(title='combine')
 
 wc.append(['创建时间', '课程名称', '学习人数', '学习时间'])
-for a, b in zip(list(ws.values)[1:], list(wt.values)[1:]):
-        wc.append(list(a)+[b[-1]])
+for i in list(ws.values)[1:]:
+    for j in wt.values:
+        if i[1] == j[1]:
+            wc.append(list(i)+[j[-1]])
 wb.save('courses.xlsx')
 
 s = set()
