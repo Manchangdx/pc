@@ -16,7 +16,7 @@ class DoubanSpider(CrawlSpider):
     def parse_item(self, response):
         yield HahaItem({
             'url': response.url,
-            'name': response.xpath('//span[@property="v:itemreviewed"]/text()').extract(),
+            'name': response.xpath('//span[@property="v:itemreviewed"]/text()').extract_first(),
             'summary': response.xpath('//span[@property="v:summary"]/text()').extract_first(),
             'score': response.xpath('//strong[@property="v:average"]/text()').extract_first()
         })

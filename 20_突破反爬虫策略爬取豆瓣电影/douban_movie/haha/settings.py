@@ -17,7 +17,13 @@ NEWSPIDER_MODULE = 'haha.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 from fake_useragent import UserAgent
-ua = UserAgent(use_cache_server=False)
+try:
+    UserAgent()
+    UserAgent(cache=False)
+    UserAgent()
+    ua = UserAgent()
+except FakeUserAgentError:
+    pass
 USER_AGENT = ua.random
 
 # Obey robots.txt rules
