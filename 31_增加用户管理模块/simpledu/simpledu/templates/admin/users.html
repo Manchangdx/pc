@@ -1,0 +1,40 @@
+{% extends 'admin/index.html' %}
+{% from 'macros.html' import render_pagination %}
+
+{% block title %}用户管理思密达{% endblock %}
+
+{% block operation %}
+  <a href="{{ url_for('admin.create_user') }}" type='button' class='btn btn-primary'>
+    <span class='glyphicon glyphicon-plus' aria-hidden='true'></span>
+    添加用户
+  </a>
+{% endblock %}
+
+{% block admin %}
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>用户名</th>
+        <th>邮箱</th>
+        <th>操作</th>
+      </tr>
+      <tbody>
+        {% for user in pagination.items %}
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <div class='btn-group' role='group'>
+                <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" type='button' class='btn btn-default'>Edit</a>
+                <a href="{{ url_for('admin.delete', user_id=user.id) }}" type='button' class='btn btn-default' onclick="confirm('确定要删除该用户么？')">Delete</a>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </thead>
+  </table>
+  {{ render_pagination(pagination, url_for('admin.users')) }}
+{% endblock %}
