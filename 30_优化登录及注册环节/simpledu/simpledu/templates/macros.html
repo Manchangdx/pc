@@ -11,8 +11,13 @@
       <label>{{ field() }} {{ field.label.text }}</label>
     </div>
     {% else %}
-    <div class="form-group">
+    <div class="form-group {% if field.errors %} has-error {% endif %}">
       {{ field.label }} {{ field(class='form-control') }}
+      {% if field.errors %}
+        {% for i in field.errors %}
+          <span class='help-block'> {{ i }}</span>
+        {% endfor %}
+      {% endif %}
     </div>
     {% endif %}
   {% endfor %}
