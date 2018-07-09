@@ -1,0 +1,9 @@
+{% extends 'admin/index.html' %}
+{% from 'macros.html' import render_form %}
+
+{% block title %}创建直播{% endblock %}
+
+{% block admin %}
+  <h2>添加直播</h2>
+  {{ render_form(form, url_for('admin.create_live')) }}
+{% endblock %}
