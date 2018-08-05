@@ -1,5 +1,5 @@
 import sys, csv
-from multiprocessing import Process, Queue as q
+from multiprocessing import Process, Queue
 
 class Args:
     def __init__(self):
@@ -62,19 +62,19 @@ class Data:
 
 data = Data().value
 
-
-q1, q2 = q(), q()
+q1, q2 = Queue(), Queue()
 
 def f1():
-    q1.put(data)
+    for i in data:
+        q1.put(data)
 
 def f2():
     l = []
     for a, b in q1.get():
         x = cal_tax(b)
         x.insert(0, a)
+        q2.put(l)
         l.append(x)
-    q2.put(l)
 
 def f3():
     with open(args.o, 'w') as f:
