@@ -1,4 +1,4 @@
-import sys, csv
+import sys, csv, queue
 from multiprocessing import Process, Queue
 
 class Args:
@@ -66,19 +66,28 @@ q1, q2 = Queue(), Queue()
 
 def f1():
     for i in data:
-        q1.put(data)
+        q1.put(i)
 
 def f2():
-    l = []
-    for a, b in q1.get():
-        x = cal_tax(b)
-        x.insert(0, a)
-        q2.put(l)
-        l.append(x)
+    def haha():
+        while True:
+            try:
+                a, b = q1.get(timeout=0.1)
+                x = cal_tax(b)
+                x.insert(0, a)
+                yield x
+            except queue.Empty:
+                return
+    for i in haha():
+        q2.put(i)
 
 def f3():
-    with open(args.o, 'w') as f:
-        csv.writer(f).writerows(q2.get())
+    with open(args.o, 'a') as f:
+        while True:
+            try:
+                csv.writer(f).writerow(q2.get(timeout=0.1))
+            except queue.Empty:
+                return
 
 Process(target=f1).start()
 Process(target=f2).start()

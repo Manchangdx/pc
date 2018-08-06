@@ -1,4 +1,4 @@
-import sys, csv, getopt, datetime
+import sys, csv, getopt, datetime, queue
 from configparser import ConfigParser
 from multiprocessing import Process, Queue as q
 
@@ -75,20 +75,29 @@ data = Data().value
 q1, q2 = q(), q()
 
 def f1():
-    q1.put(data)
+    for i in data:
+        q1.put(i)
 
 def f2():
-    l = []
-    for a, b in q1.get():
-        x = cal_tax(b)
-        x.insert(0, a)
-        x.append(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        l.append(x)
-    q2.put(l)
+    def haha():
+        while True:
+            try:
+                a, b = q1.get(timeout=0.1)
+                x = cal_tax(b)
+                x.insert(0, a)
+                yield x
+            except queue.Empty:
+                return
+    for i in haha():
+        q2.put(i)
 
 def f3():
-    with open(args.o, 'w') as f:
-        csv.writer(f).writerows(q2.get())
+    with open(args.o, 'a') as f:
+        while True:
+            try:
+                csv.writer(f).writerow(q2.get(timeout=0.1))
+            except queue.Empty:
+                return
 
 Process(target=f1).start()
 Process(target=f2).start()
