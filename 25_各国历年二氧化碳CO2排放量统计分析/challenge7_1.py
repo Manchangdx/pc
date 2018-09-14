@@ -30,5 +30,5 @@ def co2():
     l = df[df[0]>0].sort_values(0).groupby('Income group').head(1).set_index('Income group')
     # 设置列名
     l.columns = ['Lowest emissions', 'Lowest emission country']
-    # 返回全部数据
-    return pd.concat([a, h.sort_index(axis=1), l.sort_index(axis=1)], axis=1)
+    # 返回全部数据, concat 会自动对 index 排序
+    return pd.concat([a, h, l], axis=1)
