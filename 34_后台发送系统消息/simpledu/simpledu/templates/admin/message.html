@@ -1,0 +1,9 @@
+{% extends 'admin/index.html' %}
+{% from 'macros.html' import render_form %}
+
+{% block title %}Admin - Message{% endblock %}
+
+{% block admin %}
+  <h4>发送系统消息</h4>
+  {{ render_form(form, url_for('admin.send_message')) }}
+{% endblock %}
