@@ -11,15 +11,13 @@ def Temperature():
     co2.columns = ['CO2PPM']
     df = pd.concat([gas, co2, temp], axis=1)
     gas_part = df.iloc[:, :4].fillna(method='ffill').fillna(method='bfill')
-    data = gas_part['1970': '2010'].iloc[:, :4]
-    test = gas_part['2011': '2017'].iloc[:, :4]
+    data = gas_part['1970': '2010']
+    test = gas_part['2011': '2017']
 
     model = lr().fit(data, df['1970': '2010'].Median)
-    median = model.predict(test)
+    median = pd.np.round(model.predict(test), 3)
     model = lr().fit(data, df['1970': '2010'].Upper)
-    upper = model.predict(test)
+    upper = pd.np.round(model.predict(test), 3)
     model = lr().fit(data, df['1970': '2010'].Lower)
-    lower = model.predict(test)
+    lower = pd.np.round(model.predict(test), 3)
     return list(upper), list(median), list(lower)
-
-print(Temperature())
