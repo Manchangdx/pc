@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import render_form %}
+
+{% block body %}
+  {{ render_form(form, url_for('front.test')) }}
+  <br><p>Hello {{ name }}<p>
+{% endblock %}
