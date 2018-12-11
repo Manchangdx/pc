@@ -5,6 +5,10 @@ from multiprocessing import Process, Queue as q
 class Args:
     def __init__(self):
         l = sys.argv[1:]
+        # 选项有“短选项”和“长选项”两种，短选项格式：一个减号一个字母；长选项格式：俩减号多个字母
+        # getopt.getopt 方法有仨参数：要处理的对象列表、短选项组、长选项组
+        # 短选项组为字符串，若选项有参数，后面加冒号；长选项组为列表，若选项有参数，后面加等号
+        # 该方法返回值为二元元组，每个元素都是列表，一个是选项解析结果，另一个是其余参数
         options, args = getopt.getopt(l, 'hC:c:d:o:', ['help'])
         d = dict(options)
         if len(options) == 1 and list(d.keys())[0] in ['-h', '--help']:
@@ -25,8 +29,12 @@ class Config:
         self.config = self._a()
     def _a(self):
         d = {'s':0}
+        # 生成配置文件解析类的实例
         cfg = ConfigParser()
+        # 解析配置文件
         cfg.read(args.c)
+        # 获取某个配置组下的所有键值对，items 方法的返回值为列表，其中每个元素都是二元元组
+        # 注意，每个元素的 key 都是全小写的字符串，不论配置文件里是什么样
         for m, n in cfg.items(args.C):
             if m == 'jishul' or m == 'jishuh':
                 d[m] = float(n)
