@@ -24,4 +24,4 @@ class HahaSpider(scrapy.Spider):
             item['commits'] = response.css('span.num::text').extract()[0].strip()
             item['branches'] = response.css('span.num::text').extract()[1].strip()
             item['releases'] = response.css('span.num::text').extract()[2].strip()
-            yield item
+        yield item
