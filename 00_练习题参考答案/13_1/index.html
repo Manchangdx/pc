@@ -1,0 +1,14 @@
+{% from 'macros.html' import course_item %}
+
+<div> {{ course_item(course) }} </div>
+<p>{{ '=' * 20 }}</p>
+<div> {{ course_item(course, type="louplus") }} </div>
+{% if course.is_private %}
+  <p>Private</p>
+{% else %}
+  <p>Public</p>
+{% endif %}
+{% for i in course.tags %}
+  <li>{{ i }}</li>
+{% endfor %}
+
