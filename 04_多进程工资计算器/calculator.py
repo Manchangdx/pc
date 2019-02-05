@@ -1,94 +1,102 @@
+# 同上一个挑战一样，本挑战可以分解为 4 步：
+# 1、处理命令行参数；2、处理配置文件和员工数据文件
+# 3、计算数据；4、使用多进程进行计算并将计算结果写入文件
+# 前三步无变化，创建各个类、函数
 import sys, csv, queue
 from multiprocessing import Process, Queue
 
-class Args:
+class Args:  # 处理命令行参数
     def __init__(self):
-        l = sys.argv[1:]
-        self.c = l[l.index('-c')+1] 
-        self.d = l[l.index('-d')+1]
-        self.o = l[l.index('-o')+1]
+        self.c = sys.argv[sys.argv.index('-c')+1]
+        self.d = sys.argv[sys.argv.index('-d')+1]
+        self.o = sys.argv[sys.argv.index('-o')+1]
 
-args = Args()
-
-class Config:
-    def __init__(self):
-        self.config = self._a()
-    def _a(self):
-        d = {'s':0}
-        with open(args.c) as f:
-            for i in f.readlines():
-                l = i.split('=')
-                m, n = l[0].strip(), l[1].strip()
-                if m == 'JiShuL' or m == 'JiShuH':
-                    d[m] = float(n)
+class Config:  # 处理配置文件
+    def __init__(self, f):
+        self.config = self._read_conf(f)
+    def _read_conf(self, f):
+        d = {'s': 0}
+        with open(f) as f:
+            for i in f:
+                name, value = i.split(' = ')
+                # 如果 value < 1 则说明该项为社保比例项
+                if float(value) < 1:
+                    d['s'] += float(value)
                 else:
-                    d['s'] += float(n)
+                    d[name] = float(value)
         return d
 
-config = Config().config
+class UserData:  # 处理员工数据文件
+    def __init__(self, f):
+        with open(f) as f:
+            self.data = list(csv.reader(f))
 
-def cal_tax(i):
-    z = int(i)
-    sb = z * config.get('s')
-    if z < config.get('JiShuL'):
-        sb = config['JiShuL'] * config.get('s')
-    if z > config.get('JiShuH'):
-        sb = config['JiShuH'] * config.get('s')
-    x = (z-sb-3500)
-    if x < 0:
-        s = 0
-    elif x <= 1500:
-        s = x * 0.03
-    elif x <= 4500:
-        s = x * 0.1 - 105
-    elif x <= 9000:
-        s = x * 0.2 - 555
-    elif x <= 35000:
-        s = x * 0.25 - 1005
-    elif x <= 55000:
-        s = x * 0.3 - 2755
-    elif x <= 80000:
-        s = x * 0.35 - 5505
+def compute(salary):
+    # 社保金额计算
+    social_insurance_salary = salary * config['s']
+    if salary < config['JiShuL']:
+        social_insurance_salary = config['JiShuL'] * config['s']
+    if salary > config['JiShuH']:
+        social_insurance_salary = config['JiShuH'] * config['s']
+    start_point = 3500  # 起征点
+    # 需要缴税的那部分工资
+    tax_part_salary = salary - social_insurance_salary - start_point
+    if tax_part_salary <= 0:
+        tax = 0 
+    elif tax_part_salary <= 1500:
+        tax = tax_part_salary * 0.03
+    elif tax_part_salary <= 4500:
+        tax = tax_part_salary * 0.1 - 105 
+    elif tax_part_salary <= 9000:
+        tax = tax_part_salary * 0.2 - 555 
+    elif tax_part_salary <= 35000:
+        tax = tax_part_salary * 0.25 - 1005
+    elif tax_part_salary <= 55000:
+        tax = tax_part_salary * 0.3 - 2755
+    elif tax_part_salary <= 80000:
+        tax = tax_part_salary * 0.35 - 5505
     else:
-        s = x * 0.45 - 13505
-    sh = z - sb - s
-    return [z, format(sb, '.2f'), format(s, '.2f'), format(sh, '.2f')]
+        tax = tax_part_salary * 0.45 - 13505
+    # 税后工资
+    after_tax_salary = salary - social_insurance_salary - tax
+    return [salary, format(social_insurance_salary, '.2f'), format(tax, '.2f'),
+            format(after_tax_salary, '.2f')]
 
-class Data:
-    def __init__(self):
-        with open(args.d) as f:
-            l = list(csv.reader(f))
-        self.value = l
 
-data = Data().value
+if __name__ == '__main__':
+    args = Args()
+    config = Config(args.c).config
+    userdata = UserData(args.d).data
+    q1, q2 = Queue(), Queue()  # 创建两个队列，分别传送员工数据和计算结果
 
-q1, q2 = Queue(), Queue()
+    # 推送员工数据的任务
+    def f1():
+        for i in userdata:
+            q1.put(i)
 
-def f1():
-    for i in data:
-        q1.put(i)
+    # 接收员工数据，计算并推送计算结果
+    def f2():
+        def haha():
+            while True:
+                try:
+                    a, b = q1.get(timeout=0.1)
+                    x = compute(int(b))
+                    x.insert(0, a)
+                    yield x
+                except queue.Empty:
+                    return
+        for i in haha():
+            q2.put(i)
 
-def f2():
-    def haha():
-        while True:
-            try:
-                a, b = q1.get(timeout=0.1)
-                x = cal_tax(b)
-                x.insert(0, a)
-                yield x
-            except queue.Empty:
-                return
-    for i in haha():
-        q2.put(i)
+    # 接收计算结果并写入文件
+    def f3():
+        with open(args.o, 'w') as f:
+            while True:
+                try:
+                    csv.writer(f).writerow(q2.get(timeout=0.1))
+                except queue.Empty:
+                    return
 
-def f3():
-    with open(args.o, 'a') as f:
-        while True:
-            try:
-                csv.writer(f).writerow(q2.get(timeout=0.1))
-            except queue.Empty:
-                return
-
-Process(target=f1).start()
-Process(target=f2).start()
-Process(target=f3).start()
+    Process(target=f1).start()
+    Process(target=f2).start()
+    Process(target=f3).start()
