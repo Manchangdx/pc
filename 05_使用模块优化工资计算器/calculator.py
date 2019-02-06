@@ -22,7 +22,6 @@ class Args:
         self.d = d['-d']
         self.o = d['-o']
 
-args = Args()
 
 class Config:
     def __init__(self):
@@ -42,7 +41,6 @@ class Config:
                 d['s'] += float(n)
         return d
 
-config = Config().config
 
 def cal_tax(i):
     z = int(i)
@@ -77,6 +75,8 @@ class Data:
             l = list(csv.reader(f))
         self.value = l
 
+args = Args()
+config = Config().config
 data = Data().value
 
 
