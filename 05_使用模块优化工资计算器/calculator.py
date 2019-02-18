@@ -42,32 +42,36 @@ class Config:
         return d
 
 
-def cal_tax(i):
-    z = int(i)
-    sb = z * config.get('s')
-    if z < config.get('jishul'):
-        sb = config['jishul'] * config.get('s')
-    if z > config.get('jishuh'):
-        sb = config['jishuh'] * config.get('s')
-    x = (z-sb-3500)
-    if x < 0:
-        s = 0
-    elif x <= 1500:
-        s = x * 0.03
-    elif x <= 4500:
-        s = x * 0.1 - 105
-    elif x <= 9000:
-        s = x * 0.2 - 555
-    elif x <= 35000:
-        s = x * 0.25 - 1005
-    elif x <= 55000:
-        s = x * 0.3 - 2755
-    elif x <= 80000:
-        s = x * 0.35 - 5505
+def compute(salary):
+    # 社保金额计算
+    social_insurance_salary = salary * config['s']
+    if salary < config['jishul']:
+        social_insurance_salary = config['jishul'] * config['s']
+    if salary > config['jishuh']:
+        social_insurance_salary = config['jishuh'] * config['s']
+    start_point = 5000  # 起征点
+    # 需要缴税的那部分工资
+    tax_part_salary = salary - social_insurance_salary - start_point
+    if tax_part_salary <= 0:
+        tax = 0 
+    elif tax_part_salary <= 3000:
+        tax = tax_part_salary * 0.03
+    elif tax_part_salary <= 12000:
+        tax = tax_part_salary * 0.1 - 210 
+    elif tax_part_salary <= 25000:
+        tax = tax_part_salary * 0.2 - 1410
+    elif tax_part_salary <= 35000:
+        tax = tax_part_salary * 0.25 - 2660
+    elif tax_part_salary <= 55000:
+        tax = tax_part_salary * 0.3 - 4410
+    elif tax_part_salary <= 80000:
+        tax = tax_part_salary * 0.35 - 7160
     else:
-        s = x * 0.45 - 13505
-    sh = z - sb - s
-    return [z, format(sb, '.2f'), format(s, '.2f'), format(sh, '.2f')]
+        tax = tax_part_salary * 0.45 - 15160
+    # 税后工资
+    after_tax_salary = salary - social_insurance_salary - tax 
+    return [salary, format(social_insurance_salary, '.2f'), format(tax, '.2f'),
+            format(after_tax_salary, '.2f')]
 
 class Data:
     def __init__(self):
@@ -91,7 +95,7 @@ def f2():
         while True:
             try:
                 a, b = q1.get(timeout=0.1)
-                x = cal_tax(b)
+                x = compute(int(b))
                 x.insert(0, a)
                 yield x
             except queue.Empty:
