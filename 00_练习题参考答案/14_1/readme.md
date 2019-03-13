@@ -3,7 +3,7 @@ mysql> create table question (
     -> name varchar(64) not null,
     -> content text,
     -> course_id int not null,
-    -> foreign key (course_id) references user(id)
+    -> foreign key (course_id) references course(id)
     -> );
 Query OK, 0 rows affected (0.05 sec)
 
