@@ -2,6 +2,7 @@ import random
 from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware as UAM
 
 
+# 类名可以自定义
 class HahaDownloaderMiddleware(UAM):
 
     useragent_list = [
@@ -43,6 +44,7 @@ class HahaDownloaderMiddleware(UAM):
         "(KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"
     ]
 
+    # 这个方法名是固定的，不可更改
     def process_request(self, request, spider):
         request.headers.setdefault('User-Agent',
             random.choice(self.useragent_list))
