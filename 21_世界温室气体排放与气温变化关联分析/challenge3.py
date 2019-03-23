@@ -2,16 +2,21 @@ import pandas as pd, matplotlib.pyplot as plt, matplotlib.ticker as ticker
 
 def climate_plot():
     data = pd.read_excel('ClimateChange.xlsx')
-    l = ['EN.ATM.CO2E.KT', 'EN.ATM.METH.KT.CE', 'EN.ATM.NOXE.KT.CE', 'EN.ATM.GHGO.KT.CE', 'EN.CLC.GHGR.MT.CE']
+    l = ['EN.ATM.CO2E.KT', 'EN.ATM.METH.KT.CE', 'EN.ATM.NOXE.KT.CE', 
+            'EN.ATM.GHGO.KT.CE', 'EN.CLC.GHGR.MT.CE']
     data = data[data['Series code'].isin(l)].iloc[:, 6:-1]
     data.replace({'..': pd.np.nan}, inplace=True)
-    data = data.fillna(method='ffill', axis=1).fillna(method='bfill', axis=1).sum()
-    data = pd.DataFrame(data.values, index= data.index, columns=['Total GHG'])
+    # 横向填充并纵向求和，结果的数据类型是 Series
+    data = data.fillna(method='ffill', axis=1).fillna(method='bfill', 
+            axis=1).sum()
+    # 改装成 DataFrame
+    data = pd.DataFrame(data.values, index=data.index, columns=['Total GHG'])
 
     gt = pd.read_excel('GlobalTemperature.xlsx')
     gt = gt.iloc[:, [1, 4]].set_index(pd.to_datetime(gt.Date))
     gt.fillna(0, inplace=True)
-    gt_y = gt.resample('y').mean()['1990': '2010']
+    # 重采样后取年份区间可以直接使用字符串
+    gt_y = gt.resample('a').mean()['1990': '2010']
     gt_q = gt.resample('q').mean()
     df = pd.concat([gt_y.set_index(data.index), data], axis=1)
     df = df.apply(lambda x: (x-x.min())/(x.max()-x.min()))
@@ -36,4 +41,5 @@ def climate_plot():
     plt.show()
     return fig
 
-print(climate_plot())
+if __name__ == '__main__':
+    print(climate_plot())
