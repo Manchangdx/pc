@@ -21,3 +21,6 @@ def Temperature():
     model = lr().fit(data, df['1970': '2010'].Lower)
     lower = pd.np.round(model.predict(test), 3)
     return list(upper), list(median), list(lower)
+
+if __name__ == '__main__':
+    print(Temperature())
