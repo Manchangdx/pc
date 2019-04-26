@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% from 'macro.html' import course_tag %}
+
+{% block header %}
+  <p>shiyanlou</p>
+{% endblock %}
+
+{% block content %}
+  {{ course_tag(course) }}
+{% endblock %}
+
+{% block footer %}
+  <a href="{{ url_for('courses', name='python') }}">courses</a>
+{% endblock %}

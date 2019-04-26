@@ -1,0 +1,10 @@
+<title>Haha</title>
+
+{% if course.is_unique %}
+  <p>course is unique</p>
+{% else %}
+  {#{ course.tags | join(' ') }#}
+  {% for tag in course.tags %}
+    {{ tag }}
+  {% endfor %}
+{% endif %}
