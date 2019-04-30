@@ -1,0 +1,16 @@
+mysql> create table path(
+    -> id int primary key auto_increment,
+    -> name varchar(64) not null,
+    -> config varchar(128)
+    -> );
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> desc path;
++--------+--------------+------+-----+---------+----------------+
+| Field  | Type         | Null | Key | Default | Extra          |
++--------+--------------+------+-----+---------+----------------+
+| id     | int(11)      | NO   | PRI | NULL    | auto_increment |
+| name   | varchar(64)  | NO   |     | NULL    |                |
+| config | varchar(128) | YES  |     | NULL    |                |
++--------+--------------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)

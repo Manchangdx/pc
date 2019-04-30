@@ -1,0 +1,5 @@
+mysql> insert into path (name, config) value 
+    -> ('Python', "{'description': 'Python path'}"),
+    -> ('BigData', "{'description': 'BigData path'}");
+Query OK, 2 rows affected (0.02 sec)
+Records: 2  Duplicates: 0  Warnings: 0
