@@ -3,9 +3,15 @@ import time
 from selenium import webdriver
 from scrapy.http import HtmlResponse
 from selenium.webdriver import ActionChains
+from selenium.webdriver.chrome.options import Options
 
 def spider():
-    driver = webdriver.Chrome()    # 启动谷歌驱动，打开浏览器
+    options = Options()
+    options.add_argument('-headless')
+    driver = webdriver.Chrome(chrome_options=options)    
+    # 以上三行设置 Chrome 浏览器无头模式，可以有效提高程序运行速度
+    # 测试阶段可以注释掉上面三行，使用下面这一行启动谷歌驱动，打开浏览器
+    # driver = webdriver.Chrome()
     url = 'https://www.shiyanlou.com/courses/427'
     driver.get(url)                # 打开待爬取页面
     result = []
