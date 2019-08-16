@@ -19,7 +19,7 @@ class GithubSpider(scrapy.Spider):
             request = scrapy.Request(response.urljoin(url), self.parse_repo)
             request.meta['item'] = item
             yield request
-        url = response.css('div.pagination a::attr(href)').extract()[-1]
+        url = response.css('div.BtnGroup a::attr(href)').extract()[-1]
         yield response.follow(url, self.parse)
 
     def parse_repo(self, response):
