@@ -6,14 +6,12 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
 
 def spider():
-    '''
     options = Options()
     options.add_argument('-headless')
     driver = webdriver.Chrome(options=options)    
     # 以上三行设置 Chrome 浏览器无头模式，可以有效提高程序运行速度
     # 测试阶段可以注释掉上面三行，使用下面这一行启动谷歌驱动，打开浏览器
-    '''
-    driver = webdriver.Firefox()
+    # driver = webdriver.Chrome()
     url = 'https://www.shiyanlou.com/courses/427'
     driver.get(url)                # 打开待爬取页面
     result = []
@@ -35,16 +33,10 @@ def spider():
         # 定位到第二个 li 标签，也就是“下一页”那个按钮
         ac = driver.find_element_by_xpath(
             '(//li[contains(@class, "page-item")])[2]')
-        driver.execute_script("window.scrollBy(0, 1000)")
-        while True:
-            try:
-                ActionChains(driver).move_to_element(ac).perform()
-                time.sleep(.1)  # 等待按钮加载
-                ac.click()     # 点击下一页按钮
-            except:
-                driver.execute_script("window.scrollBy(0, 500)")
-                continue
-            break
+        # chromedirver 无法自动定位到当前页面未显示区域，下面这行代码起到定位作用
+        ActionChains(driver).move_to_element(ac).perform()
+        time.sleep(1)  # 等待按钮加载
+        ac.click()     # 点击下一页按钮
     driver.quit()
     with open('comments.json', 'w') as f:
         json.dump(result, f)
