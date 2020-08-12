@@ -1,13 +1,9 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
 import scrapy
 from ..items import HahaItem
 
 
 class GithubSpider(scrapy.Spider):
     name = 'github'
-    allowed_domains = ['github.com']
     start_urls = ['https://github.com/shiyanlou?tab=repositories']
 
     def parse(self, response):
@@ -24,10 +20,9 @@ class GithubSpider(scrapy.Spider):
 
     def parse_repo(self, response):
         item = response.meta['item']
-        if response.css('span.num'):
-            item['commits'] = response.css('li.commits span::text').extract_first()
-            item['branches'] = response.css(
-                               'ul.numbers-summary span::text').extract()[1]
-            item['releases'] = response.css(
-                               'ul.numbers-summary span::text').extract()[2]
+        br = response.css('div.ml-3 strong::text').extract()
+        if br:
+            item['branches'] = br[0]
+            item['releases'] = br[1]
+            item['commits'] = response.css('li.ml-0 strong::text').extract_first()
         return item
