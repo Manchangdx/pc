@@ -14,7 +14,7 @@ def spider():
     # 测试阶段可以注释掉上面三行，使用下面这一行启动谷歌驱动，打开浏览器
     '''
     driver = webdriver.Firefox()
-    url = 'https://www.shiyanlou.com/courses/427'
+    url = 'https://www.lanqiao.cn/courses/427'
     driver.get(url)                # 打开待爬取页面
     result = []
     while True:
