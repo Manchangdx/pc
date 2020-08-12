@@ -5,10 +5,10 @@ from ..items import HahaItem
 
 class Haha(CrawlSpider):
     name = 'haha'
-    start_urls = ['http://flask.pocoo.org/docs/1.0/']
+    start_urls = ['https://flask.palletsprojects.com/en/1.0.x/']
     rules = (
         Rule(
-            LinkExtractor(allow='http://flask.pocoo.org/docs/1.0/*'),
+            LinkExtractor(allow='https://flask.palletsprojects.com/en/1.0.x/*'),
             callback='parse_item',
             follow=True
         ),
